@@ -9,66 +9,6 @@
 #
 #HOME directory of base image =>  /opt/app-root/src
 
-execute_maven_build()
-{
-  echo "---> Building application using Maven ..."
-
-  MAVEN_ARGS="package -DskipTests ${MAVEN_ARGS_APPEND}"
-  echo "---> Found pom.xml.  Attempting to build with 'mvn ${MAVEN_ARGS}'"
-
-  echo "---> Using $(mvn --version)"
-
-  # Execute the actual build
-  mvn -e $MAVEN_ARGS
-
-  ERR=$?
-  if [ $ERR -ne 0 ]; then
-    echo "Aborting due to error code $ERR from Maven build"
-    exit $ERR
-  fi
-
-  # Copy built artifacts (if any!) from the target/ directory
-  # to the $DEPLOY_DIR directory for later deployment
-  cp -v $HOME/target/*.* $DEPLOY_DIR 2> /dev/null
-
-  # Clean up after Maven run ....
-  mvn clean
-
-  if [ -d "$HOME/.m2/repository" ]; then
-    rm -rf $HOME/.m2/repository
-  fi
-}
-
-execute_gradle_build()
-{
-  echo "---> Building application using Gradle ..."
-
-  GRADLE_ARGS="assemble ${GRADLE_ARGS_APPEND}"
-  echo "---> Found gradle.build. Attempting to build with 'gradle -s ${GRADLE_ARGS}'"
-
-  echo "---> Using $(gradle --version)"
-
-  # Execute the actual build
-  gradle -s $GRADLE_ARGS
-
-  ERR=$?
-  if [ $ERR -ne 0 ]; then
-    echo "Aborting due to error code $ERR from Gradle build"
-    exit $ERR
-  fi
-
-  # Copy built artifacts (if any!) from the builds/libs directory
-  # to the $DEPLOY_DIR directory for later deployment
-  cp -v $HOME/build/libs/*.* $DEPLOY_DIR 2> /dev/null
-
-  # Clean up after Gradle run ....
-  gradle clean
-
-  if [ -d "$HOME/.gradle/caches" ]; then
-    rm -rf $HOME/.gradle/caches
-  fi
-}
-
 echo "--> S2I:assemble step start ..."
 echo "--> Executing script as user=" + `id`
 
@@ -94,14 +34,26 @@ cp -Rf /tmp/src/. ./
 echo "---> Copied application source to $HOME ..."
 ls -la $HOME
 
-echo "---> S2I:assemble Build type=$BUILD_TYPE ..."
-if [ $BUILD_TYPE = "Maven" ] && [ -f "$HOME/pom.xml" ]; then
-  execute_maven_build
-elif [ $BUILD_TYPE = "Gradle" ] && [ -f "$HOME/build.gradle" ]; then
-  execute_gradle_build
-else
-  # Copy the fat jar to the deployment directory
-  cp -v $HOME/*.jar $DEPLOY_DIR 2> /dev/null
+echo "---> Building application using Gradle $(gradle --version)..."
+
+# Execute the actual build
+gradle -s assemble
+
+ERR=$?
+if [ $ERR -ne 0 ]; then
+echo "Aborting due to error code $ERR from Gradle build"
+exit $ERR
+fi
+
+# Copy built artifacts (if any!) from the builds/libs directory
+# to the $DEPLOY_DIR directory for later deployment
+cp -v $HOME/build/libs/*.* $DEPLOY_DIR 2> /dev/null
+
+# Clean up after Gradle run ....
+gradle clean
+
+if [ -d "$HOME/.gradle/caches" ]; then
+rm -rf $HOME/.gradle/caches
 fi
 
 # For Spring Boot, there should only be 1 fat jar

@@ -2,7 +2,10 @@
   "apiVersion": "v1",
   "kind": "Template",
   "metadata": {
-    "name": "springboot-java"
+    "name": "springboot-gradle",
+    "annotations": {
+        "iconClass": "icon-spring"
+    }
   },
   "parameters": [
     {
@@ -27,20 +30,10 @@
       "name": "CONTEXT_DIR"
     },
     {
-      "name": "BUILD_TYPE",
-      "displayName": "Build Type",
-      "description": "Specify build type - Maven OR Gradle",
-      "value": "Maven"
-    },
-    {
-      "name": "MAVEN_ARGS_APPEND",
-      "displayName": "Maven arguments to append",
-      "description": "Append Maven arguments"
-    },
-    {
-      "name": "GRADLE_ARGS_APPEND",
-      "displayName": "Gradle arguments to append",
-      "description": "Append Gradle arguments"
+      "name": "GIT_SECRET",
+      "displayName": "Github trigger secret",
+      "generate": "expression",
+      "from": "[a-zA-Z0-9]{12}"
     },
     {
       "name": "APP_OPTIONS",
@@ -101,39 +94,27 @@
         "source": {
           "git": {
             "uri": "${GIT_URI}",
-	    "ref": "${GIT_REF}"
+	        "ref": "${GIT_REF}"
           },
           "secrets": [],
-	  "contextDir": "${CONTEXT_DIR}",
+	      "contextDir": "${CONTEXT_DIR}",
           "type": "Git"
         },
         "strategy": {
           "sourceStrategy": {
             "from": {
-              "kind": "ImageStreamTag",
-	      "name": "springboot-java:latest"
-            },
-	    "env": [
-		{
-		  "name": "BUILD_TYPE",
-		  "value": "${BUILD_TYPE}"
-		}
-	    ]
+                "kind": "ImageStreamTag",
+	            "name": "springboot-gradle:latest"
+            }
           },
           "type": "Source"
         },
         "triggers": [
           {
             "github": {
-		"secret": "secret"
+		        "secret": "${GIT_SECRET}"
             },
             "type": "GitHub"
-          },
-          {
-            "generic": {
-		"secret": "secret"
-            },
-            "type": "Generic"
           },
           {
             "type": "ConfigChange"
