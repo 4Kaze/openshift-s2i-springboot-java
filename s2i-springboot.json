@@ -181,13 +181,35 @@
                   }
                 ],
                 "resources": {},
-                "terminationMessagePath": "/dev/termination-log"
+                "terminationMessagePath": "/dev/termination-log",
+                "volumeMounts": [
+                    {
+                        "name": "ssl-certs",
+                        "readOnly": true,
+                        "mountPath": "/mnt/certs"
+                    }
+                ]
               }
             ],
             "dnsPolicy": "ClusterFirst",
             "restartPolicy": "Always",
             "securityContext": {},
-            "terminationGracePeriodSeconds": 30
+            "terminationGracePeriodSeconds": 30,
+            "volumes": [
+                {
+                    "name": "ssl-certs",
+                    "secret": {
+                        "secretName": "sso-truststore",
+                        "items": [
+                            {
+                                "key": "truststore",
+                                "path": "truststore.jks"
+                            }
+                        ],
+                        "defaultMode": 420
+                    }
+                }
+            ]
           }
         },
         "test": false,
