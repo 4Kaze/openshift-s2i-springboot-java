@@ -34,7 +34,7 @@ cp -Rf /tmp/src/. ./
 echo "---> Copied application source to $HOME ..."
 ls -la $HOME
 
-echo "---> Building application using Gradle $(gradle --version)..."
+echo "---> Building application using Gradle with --scan flag..."
 
 # Execute the actual build
 gradle -s --scan assemble
