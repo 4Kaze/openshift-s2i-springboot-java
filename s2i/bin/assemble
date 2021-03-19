@@ -37,7 +37,7 @@ ls -la $HOME
 echo "---> Building application using Gradle $(gradle --version)..."
 
 # Execute the actual build
-gradle -s assemble
+gradle -s --scan assemble
 
 ERR=$?
 if [ $ERR -ne 0 ]; then

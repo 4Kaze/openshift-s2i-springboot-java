@@ -2,7 +2,7 @@
   "apiVersion": "v1",
   "kind": "Template",
   "metadata": {
-    "name": "springboot-gradle",
+    "name": "springboot-gradle-application",
     "annotations": {
         "iconClass": "icon-spring"
     }
