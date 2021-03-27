@@ -10,7 +10,7 @@ LABEL io.k8s.description="Platform for microservices developed using gradle and 
       io.openshift.tags="builder,spring,java,boot,gradle"
 
 
-RUN yum install -y java-11-openjdk-devel && \
+RUN yum install -y java-11-openjdk-devel nc && \
     yum clean all -y
 
 RUN wget https://services.gradle.org/distributions/gradle-6.3-bin.zip -P /tmp && \
