@@ -34,11 +34,6 @@
       "displayName": "Github trigger secret",
       "generate": "expression",
       "from": "[a-zA-Z0-9]{12}"
-    },
-    {
-      "name": "APP_OPTIONS",
-      "displayName": "Application arguments",
-      "description": "Arguments to be passed to the Springboot application (at runtime)"
     }
   ],
   "objects": [
@@ -194,7 +189,6 @@
                         "port": "8080"
                     }
                 }
-                
               }
             ],
             "dnsPolicy": "ClusterFirst",
