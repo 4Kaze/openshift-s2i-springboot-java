@@ -181,7 +181,20 @@
                   }
                 ],
                 "resources": {},
-                "terminationMessagePath": "/dev/termination-log"
+                "terminationMessagePath": "/dev/termination-log",
+                "readinessProbe": {
+                    "httpGet": {
+                        "path": "/actuator/health/readiness",
+                        "port": "8080"
+                    }
+                },
+                "livenessProbe": {
+                    "httpGet": {
+                        "path": "/actuator/health/liveness",
+                        "port": "8080"
+                    }
+                }
+                
               }
             ],
             "dnsPolicy": "ClusterFirst",
